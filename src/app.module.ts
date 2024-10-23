@@ -5,15 +5,15 @@ import { UsersModule } from './users/users.module';
 import { ComparismModule } from './comparism/comparism.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
     UsersModule,
     ComparismModule,
+    SharedModule,
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(
-      'mongodb+srv://reconciliation:upcMHhKJDOAJ2qLV@cluster0.uyrrr.mongodb.net/reconciliation?retryWrites=true&w=majority&appName=Cluster0',
-    ),
+    MongooseModule.forRoot(process.env.DATABASE),
   ],
   controllers: [AppController],
   providers: [AppService],

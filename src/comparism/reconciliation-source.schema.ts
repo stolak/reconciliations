@@ -4,7 +4,7 @@ import { Base } from 'src/customized/schema/base';
 
 export type ReconciliationSourceDocument = ReconciliationSource & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class ReconciliationSource extends Base {
   @Prop({ required: true })
   description: string;

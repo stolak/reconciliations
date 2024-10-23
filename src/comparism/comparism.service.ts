@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ReconciliationSourceRepository } from './reconciliation-source.repository';
 import axios from 'axios';
 
 interface inputType {
@@ -9,10 +10,15 @@ interface inputType {
 
 @Injectable()
 export class ComparismService {
+  constructor(
+    private reconciliationSourceRepository: ReconciliationSourceRepository,
+  ) {}
   private readonly openAiApiUrl = 'https://api.openai.com/v1/chat/completions';
   async compareRecords(record1: string, record2: string): Promise<string> {
     const prompt = `Compare the following two records and return "yes" if they refer to the same thing, even if the wording is different. If they do not refer to the same thing, return "no". Do not provide any explanations.\n\nRecord 1: ${record1}\nRecord 2: ${record2}`;
-
+    this.reconciliationSourceRepository.createWithBase({
+      description: prompt,
+    });
     try {
       return this.compare(prompt, '');
     } catch (error) {
