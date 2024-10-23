@@ -10,9 +10,7 @@ interface inputType {
 @Injectable()
 export class ComparismService {
   private readonly openAiApiUrl = 'https://api.openai.com/v1/chat/completions';
-
   async compareRecords(record1: string, record2: string): Promise<string> {
-    const apiKey = process.env.OPENAI_API_KEY;
     const prompt = `Compare the following two records and return "yes" if they refer to the same thing, even if the wording is different. If they do not refer to the same thing, return "no". Do not provide any explanations.\n\nRecord 1: ${record1}\nRecord 2: ${record2}`;
 
     try {
@@ -23,8 +21,6 @@ export class ComparismService {
   }
 
   async compareRecords2(record: inputType[]): Promise<string> {
-    const apiKey = process.env.OPENAI_API_KEY;
-
     const result = record
       .map(
         (item, index) =>
@@ -38,8 +34,6 @@ export class ComparismService {
     3. Yes
   
   ${result}`;
-
-    console.log(prompt);
     try {
       return this.compare(prompt, '');
     } catch (error) {
@@ -51,8 +45,6 @@ export class ComparismService {
     record1: inputType[],
     record2: inputType[],
   ): Promise<string> {
-    const apiKey = process.env.OPENAI_API_KEY;
-
     const result1 = record1
       .map((item, index) => `${index + 1}. "${item.record1}"`)
       .join('\n');
@@ -68,8 +60,6 @@ export class ComparismService {
   
   \nRecord1: ${result1}
   \nRecord2: ${result2}`;
-
-    console.log(prompt);
 
     try {
       return this.compare(prompt, '');
