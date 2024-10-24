@@ -1,5 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ComparismService } from './comparism.service';
+import { CreateReconciliationInput } from './inputs/create-reconciliation-input';
+import { ReconciliationSource } from './reconciliation-source.schema';
 
 interface inputType {
   record1: string;
@@ -9,6 +11,13 @@ interface inputType {
 @Controller('compare')
 export class ComparismController {
   constructor(private readonly comparismService: ComparismService) {}
+
+  @Post('create')
+  async create(
+    @Body() input: CreateReconciliationInput,
+  ): Promise<ReconciliationSource> {
+    return this.comparismService.create(input);
+  }
 
   @Post('single')
   async compare(

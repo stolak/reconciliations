@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ReconciliationSourceRepository } from './reconciliation-source.repository';
+import { CreateReconciliationInput } from './inputs/create-reconciliation-input';
+import { ReconciliationSource } from './reconciliation-source.schema';
+import { DynamicVariable } from 'src/customized/types/dynamic-variable';
 import axios from 'axios';
 
 interface inputType {
@@ -14,6 +17,28 @@ export class ComparismService {
     private reconciliationSourceRepository: ReconciliationSourceRepository,
   ) {}
   private readonly openAiApiUrl = 'https://api.openai.com/v1/chat/completions';
+
+  private dynamicToString(dynamic: DynamicVariable[]): string {
+    try {
+      return dynamic.map((item) => `${item.name}: ${item.value}`).join(' ');
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async create(
+    input: CreateReconciliationInput,
+  ): Promise<ReconciliationSource> {
+    try {
+      return this.reconciliationSourceRepository.createWithBase({
+        ...input,
+        comparismDetails:
+          this.dynamicToString(input.dynamicVariables) || input.description,
+      });
+    } catch (error) {
+      throw new Error(`Error creating record: ${error.message}`);
+    }
+  }
   async compareRecords(record1: string, record2: string): Promise<string> {
     const prompt = `Compare the following two records and return "yes" if they refer to the same thing, even if the wording is different. If they do not refer to the same thing, return "no". Do not provide any explanations.\n\nRecord 1: ${record1}\nRecord 2: ${record2}`;
     this.reconciliationSourceRepository.createWithBase({
